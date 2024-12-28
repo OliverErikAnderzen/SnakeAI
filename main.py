@@ -1,8 +1,10 @@
 from model import SnakeGameModel
 from view import SnakeGameView
 from controller import SnakeGameController
+import pygame
 
 def main():
+    pygame.init()
     # Initialize the model
     grid_size = (20, 20)  # Example grid size
     model = SnakeGameModel(grid_size)
@@ -15,6 +17,8 @@ def main():
 
     # Run the game
     controller.run()
+
+    pygame.quit()
 
 if __name__ == "__main__":
     main()
