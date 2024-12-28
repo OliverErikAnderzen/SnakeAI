@@ -22,8 +22,14 @@ class SnakeGameController:
         return None
 
     def run(self):
+        clock = pygame.time.Clock()
         while not self.model.is_game_over():
             action = self.get_player_input()
+            if action == "QUIT":
+                break
             if action:
                 self.model.step(action)
             self.view.render()
+            clock.tick(10)
+
+        print(f"Game Over! Your score: {self.model.score}")
