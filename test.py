@@ -13,6 +13,9 @@ pygame.init()
 screen = pygame.display.set_mode((grid_size[0]*cell_size, grid_size[1]*cell_size))
 pygame.display.set_caption("SnakeAI")
 
+def drawSnake():
+    pygame.draw.rect(screen, GREEN, (cell_size*snake_position[0],cell_size*snake_position[1],20,20))
+
 
 def runGame():
     running = True
@@ -24,7 +27,9 @@ def runGame():
             
             screen.fill((0,0,0))
 
-            
+            drawSnake()
+
+            pygame.display.flip() #redraws the screen
 
 
 
