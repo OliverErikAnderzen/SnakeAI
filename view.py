@@ -14,13 +14,13 @@ class SnakeGameView:
     def render(self):
         self.screen.fill((0, 0, 0))
 
-        for segment in self.model.snake:
+        for segment in self.model.segments:
             x, y = segment
             pygame.draw.rect(self.screen, (0, 255, 0),
                              (x * self.cell_size, y*self.cell_size, self.cell_size, self.cell_size))
             
         fx, fy = self.model.food
         pygame.draw.rect(self.screen, (255, 0, 0),
-                         (fx * self.cell_size, fy * self.cell_size, self.cell_size, self.cell_size))
+                        (fx * self.cell_size, fy * self.cell_size, self.cell_size, self.cell_size))
 
         pygame.display.flip()

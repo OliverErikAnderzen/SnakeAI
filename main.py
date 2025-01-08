@@ -18,7 +18,5 @@ def main():
     # Run the game
     controller.run()
 
-    pygame.quit()
-
 if __name__ == "__main__":
     main()

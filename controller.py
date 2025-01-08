@@ -1,4 +1,3 @@
-import time
 import pygame
 
 class SnakeGameController:
@@ -8,6 +7,7 @@ class SnakeGameController:
 
     def get_player_input(self):
         for event in pygame.event.get():
+            print(event)
             if event.type == pygame.QUIT:
                 self.model.game_over = True
             elif event.type == pygame.KEYDOWN:
@@ -28,8 +28,9 @@ class SnakeGameController:
             if action == "QUIT":
                 break
             if action:
-                self.model.step(action)
+                self.model.set_direction(action)
+            self.model.step()
             self.view.render()
-            clock.tick(10)
+            clock.tick(3)
 
         print(f"Game Over! Your score: {self.model.score}")
