@@ -4,6 +4,7 @@ class SnakeGameModel:
         self.reset()
 
     def reset(self):
+        self.FPS = 5
         self.segments = [(5, 5)]
         self.direction = "UP"
         self.food = (15, 15)

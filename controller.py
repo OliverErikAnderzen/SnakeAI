@@ -31,6 +31,6 @@ class SnakeGameController:
                 self.model.set_direction(action)
             self.model.step()
             self.view.render()
-            clock.tick(3)
+            clock.tick(self.model.FPS)
 
         print(f"Game Over! Your score: {self.model.score}")
