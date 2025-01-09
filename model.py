@@ -1,3 +1,5 @@
+import random
+
 class SnakeGameModel:
     def __init__(self, grid_size):
         self.grid_size = grid_size
@@ -57,6 +59,16 @@ class SnakeGameModel:
         #set the new food position to random tuple
         self.food = new_position
 
+    def is_eating(self):
+        # is eating if the next step will be on the food position
+        return self.step_head(self.segments[0]) == self.food
+
+    def eat(self):
+        # append foods position to front of segments DONE
+        self.segments.insert(0,self.food)
+
+        # create a new food position
+        self.new_food()
 
     def is_out_of_bounds(self):
         x, y = self.segments[0]
