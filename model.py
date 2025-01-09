@@ -35,6 +35,16 @@ class SnakeGameModel:
     def step(self):
         self.segments = [self.step_segment(segment) for segment in self.segments]
         print(self.segments)
+    def generate_food_position(self):
+        return (random.randint(0,19), random.randint(0,19))
+    
+    def new_food(self):
+        #generate a random tuple
+        new_position = self.generate_food_position()
+
+        #set the new food position to random tuple
+        self.food = new_position
+
 
     def is_out_of_bounds(self):
         x, y = self.segments[0]
