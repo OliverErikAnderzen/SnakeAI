@@ -25,12 +25,10 @@ class SnakeGameView:
         self.screen.fill((0, 0, 0))
 
         for segment in self.model.segments:
+            green = ((0, 255, 0))
             x, y = segment
-            pygame.draw.rect(self.screen, (0, 255, 0),
-                             (x * self.cell_size, y*self.cell_size, self.cell_size, self.cell_size))
-            
-        fx, fy = self.model.food
-        pygame.draw.rect(self.screen, (255, 0, 0),
-                        (fx * self.cell_size, fy * self.cell_size, self.cell_size, self.cell_size))
+            self.draw_segment(x, y, green)
 
+        self.draw_food()
+            
         pygame.display.flip()
