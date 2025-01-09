@@ -11,6 +11,16 @@ class SnakeGameView:
         )
         pygame.display.set_caption("SnakeAI")
 
+    def draw_segment(self, x, y, color):
+        pygame.draw.rect(self.screen, color,
+                             (x * self.cell_size, y*self.cell_size, self.cell_size, self.cell_size))
+            
+    def draw_food(self):
+        red = (255,0,0)
+        fx, fy = self.model.food
+        self.draw_segment(fx, fy, red)
+        
+
     def render(self):
         self.screen.fill((0, 0, 0))
 
