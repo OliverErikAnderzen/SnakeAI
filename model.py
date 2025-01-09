@@ -21,8 +21,8 @@ class SnakeGameModel:
         elif newDirection == "LEFT" and self.direction != "RIGHT":
             self.direction = newDirection
 
-    def step_segment(self, segment):
-        x, y = segment
+    def step_head(self, head):
+        x, y = head
         if self.direction == "UP":
             return (x, y-1)
         if self.direction == "DOWN":
