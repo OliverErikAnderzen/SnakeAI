@@ -36,7 +36,7 @@ class SnakeGameModel:
         self.segments = [self.step_segment(segment) for segment in self.segments]
         print(self.segments)
 
-    def out_of_bounds(self):
+    def is_out_of_bounds(self):
         x, y = self.segments[0]
         if x > 19 or x < 0:
             return True
@@ -44,7 +44,7 @@ class SnakeGameModel:
             return True
 
     def is_game_over(self):
-        if self.out_of_bounds(): self.game_over = True 
+        if self.is_out_of_bounds(): self.game_over = True 
 
         return self.game_over
 
