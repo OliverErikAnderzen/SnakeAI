@@ -33,8 +33,20 @@ class SnakeGameModel:
             return (x-1, y)
 
     def step(self):
-        self.segments = [self.step_segment(segment) for segment in self.segments]
-        print(self.segments)
+        new_position = None
+        if self.is_eating():
+            self.eat()
+            return
+        
+        for i in range(len(self.segments)):
+            if i == 0:
+                new_position = self.segments[i]
+                self.segments[i] = self.step_head(self.segments[i])
+            else:
+                old_position = self.segments[i]
+                self.segments[i] = new_position
+                new_position = old_position
+                
     def generate_food_position(self):
         return (random.randint(0,19), random.randint(0,19))
     
