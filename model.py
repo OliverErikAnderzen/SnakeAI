@@ -23,6 +23,12 @@ class SnakeGameModel:
         elif newDirection == "LEFT" and self.direction != "RIGHT":
             self.direction = newDirection
 
+    def check_snake_collide(self):
+        snake_head = self.segments[0]
+        snake_body = self.segments[1:]
+        if snake_head in snake_body:
+            self.game_over = True
+
     def step_head(self, head):
         x, y = head
         if self.direction == "UP":

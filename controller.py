@@ -45,7 +45,8 @@ class SnakeGameController:
             if action:
                 self.model.set_direction(action)
             self.model.step()
+            self.model.check_snake_collide()
             self.view.render()
             clock.tick(self.model.FPS)
 
-        print(f"Game Over! Your score: {self.model.score}")
+        print(f"Game Over! Your score: {len(self.model.segments)-1}")
