@@ -20,9 +20,24 @@ class SnakeGameController:
                 elif event.key == pygame.K_RIGHT:
                     return "RIGHT"
         return None
+    
+    def wait_for_button_press(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return "QUIT"  # Return "QUIT" to exit the game
+                elif event.type == pygame.KEYDOWN:  # Key press detected
+                    return event.key  # Return the key pressed
+            # You can also add a small delay to reduce CPU usage
+            self.view.render()
+            pygame.time.wait(10)
 
     def run(self):
         clock = pygame.time.Clock()
+
+        if self.wait_for_button_press() == "QUIT":
+            return
+
         while not self.model.is_game_over():
             action = self.get_player_input()
             if action == "QUIT":
