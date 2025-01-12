@@ -11,9 +11,19 @@ class SnakeGameModel:
         self.direction = "UP"
         self.food = (15, 15)
         self.score = 0
-        self.game_over = False
+        self.var_game_over = False
 
     def set_direction(self, newDirection):
+        if newDirection == "DOWN":
+            self.direction = newDirection
+        elif newDirection == "UP":
+            self.direction = newDirection
+        elif newDirection == "RIGHT":
+            self.direction = newDirection
+        elif newDirection == "LEFT":
+            self.direction = newDirection
+
+    def turn_direction(self, newDirection):
         if newDirection == "DOWN" and self.direction != "UP":
             self.direction = newDirection
         elif newDirection == "UP" and self.direction != "DOWN":
@@ -23,11 +33,10 @@ class SnakeGameModel:
         elif newDirection == "LEFT" and self.direction != "RIGHT":
             self.direction = newDirection
 
-    def check_snake_collide(self):
+    def snake_collide(self):
         snake_head = self.segments[0]
         snake_body = self.segments[1:]
-        if snake_head in snake_body:
-            self.game_over = True
+        return snake_head in snake_body
 
     def step_head(self, head):
         x, y = head
@@ -42,7 +51,7 @@ class SnakeGameModel:
 
     def step(self):
         new_position = None
-        if self.is_eating():
+        if self.eating():
             self.eat()
             return
         
@@ -65,7 +74,7 @@ class SnakeGameModel:
         #set the new food position to random tuple
         self.food = new_position
 
-    def is_eating(self):
+    def eating(self):
         # is eating if the next step will be on the food position
         return self.step_head(self.segments[0]) == self.food
 
@@ -76,17 +85,22 @@ class SnakeGameModel:
         # create a new food position
         self.new_food()
 
-    def is_out_of_bounds(self):
+    def out_of_bounds(self):
         x, y = self.segments[0]
         if x > 19 or x < 0:
             return True
         if y > 19 or y < 0:
             return True
 
-    def is_game_over(self):
-        if self.is_out_of_bounds(): self.game_over = True 
+    def game_over(self):
+        if self.out_of_bounds() or self.snake_collide(): 
+            self.var_game_over = True 
 
-        return self.game_over
+        return self.var_game_over
+    
+    def set_game_over(self, newState):
+        if newState == True or newState == False:
+            self.var_game_over = newState
 
     def get_state(self):
         return {
