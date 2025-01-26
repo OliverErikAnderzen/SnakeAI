@@ -17,3 +17,6 @@ def SnakeGame():
 
     # Run the game
     controller.run()
+
+
+SnakeGame()
