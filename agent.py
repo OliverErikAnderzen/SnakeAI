@@ -1,4 +1,6 @@
 import torch
+import torch.nn as nn
+import torch.nn.functional as final_move
 import random
 import numpy as np
 from collections import deque
@@ -13,6 +15,20 @@ MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
 
+class SnakeGameNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SnakeGameNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3
+        return x
+
+
 class Agent:
     def __init__(self):
         self.n_games = 0
@@ -22,7 +38,15 @@ class Agent:
         # TODO: model, trainer
 
     def get_state(self, game):
-        pass
+        head = game.snake[0]
+        point_left = (head[0] - 1, head[1])
+        point_right = (head[0] + 1, head[1])
+        point_up = (head[0], head[1] - 1)
+        point_down = (head[0], head[1] + 1)
+
+        danger_straight = game.is_collision(point_up if game.direction == 'UP' else point_down)
+        danger_left = game.is_collision(point_left if game.direction == 'LEFT' else point_right)
+        danger_right = game.is_collision(point_right if game.direction == 'RIGHT' else point_left)
 
     def remember(self, state, action, reward, next_state, done):
         pass
