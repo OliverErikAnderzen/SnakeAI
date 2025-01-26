@@ -21,7 +21,7 @@ class SnakeGameController:
         return None
     
     def wait_for_button_press(self):
-       while not self.model.game_over():
+        while not self.model.game_over():
             action = self.get_player_input()
             if action == "QUIT":
                 self.model.set_game_over(True)
