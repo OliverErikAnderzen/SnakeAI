@@ -124,9 +124,20 @@ class Agent:
 
     def train_long_memory(self):
         pass
+        if len(self.memory) > BATCH_SIZE:
+            mini_sample = random.sample(self.memory, BATCH_SIZE)
+        else:
+            mini_sample = self.memory
 
     def train_short_memory(self):
         pass
+        states, actions, rewards, next_states, dones = zip(*mini_sample)
+
+        self._train_step(states, actions, rewards, next_states, dones)   
+
+    def train_short_memory(self, state, action, reward, next_state, done):
+        self._train_step(state, action, reward, next_state, done)
+        
 
     def get_action(self, state):
         pass
