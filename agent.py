@@ -43,6 +43,72 @@ class Agent:
         point_right = (head[0] + 1, head[1])
         point_up = (head[0], head[1] - 1)
         point_down = (head[0], head[1] + 1)
+        direction = game.direction
+        food = game.food
+
+        point_straight = (
+            (head[0], head[1] - 1) if direction == "UP" else
+            (head[0], head[1] + 1) if direction == "DOWN" else
+            (head[0] - 1, head[1]) if direction == "LEFT" else
+            (head[0] + 1, head[1])  # RIGHT
+        )
+        point_left = (
+            (head[0] - 1, head[1]) if direction == "UP" else
+            (head[0] + 1, head[1]) if direction == "DOWN" else
+            (head[0], head[1] + 1) if direction == "LEFT" else
+            (head[0], head[1] - 1)  # RIGHT
+        )
+        point_right = (
+            (head[0] + 1, head[1]) if direction == "UP" else
+            (head[0] - 1, head[1]) if direction == "DOWN" else
+            (head[0], head[1] - 1) if direction == "LEFT" else
+            (head[0], head[1] + 1)  # RIGHT
+        )
+
+
+        # Check if these points are dangerous
+        danger_straight = (
+            point_straight in game.segments or
+            point_straight[0] < 0 or
+            point_straight[1] < 0 or
+            point_straight[0] >= game.grid_size[0] or
+            point_straight[1] >= game.grid_size[1]
+        )
+        danger_left = (
+            point_left in game.segments or
+            point_left[0] < 0 or
+            point_left[1] < 0 or
+            point_left[0] >= game.grid_size[0] or
+            point_left[1] >= game.grid_size[1]
+        )
+        danger_right = (
+            point_right in game.segments or
+            point_right[0] < 0 or
+            point_right[1] < 0 or
+            point_right[0] >= game.grid_size[0] or
+            point_right[1] >= game.grid_size[1]
+        )
+
+        # Normalize direction and food locations
+        state = [
+            # Danger zones
+            danger_straight,
+            danger_left,
+            danger_right,
+
+            # Move direction
+            direction == "LEFT",
+            direction == "RIGHT",
+            direction == "UP",
+            direction == "DOWN",
+
+            # Food location
+            food[0] < head[0],  # Food left
+            food[0] > head[0],  # Food right
+            food[1] < head[1],  # Food up
+            food[1] > head[1],  # Food down
+        ]
+        return np.array(state, dtype=int)
 
         danger_straight = game.is_collision(point_up if game.direction == 'UP' else point_down)
         danger_left = game.is_collision(point_left if game.direction == 'LEFT' else point_right)
