@@ -25,7 +25,6 @@ class SnakeGameNN(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = self.fc3
         x = self.fc3(x)
         return x
 
@@ -36,17 +35,12 @@ class Agent:
         self.epsilon = 0 # randomness
         self.gamma = 0 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft() if full
-        # TODO: model, trainer
         self.model = SnakeGameNN(input_size=11, hidden_size=256, output_size=3)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=LR)
         self.criterion = nn.MSELoss()
 
     def get_state(self, game):
         head = game.snake[0]
-        point_left = (head[0] - 1, head[1])
-        point_right = (head[0] + 1, head[1])
-        point_up = (head[0], head[1] - 1)
-        point_down = (head[0], head[1] + 1)
         direction = game.direction
         food = game.food
 
@@ -114,23 +108,16 @@ class Agent:
         ]
         return np.array(state, dtype=int)
 
-        danger_straight = game.is_collision(point_up if game.direction == 'UP' else point_down)
-        danger_left = game.is_collision(point_left if game.direction == 'LEFT' else point_right)
-        danger_right = game.is_collision(point_right if game.direction == 'RIGHT' else point_left)
 
     def remember(self, state, action, reward, next_state, done):
-        pass
         self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
-        pass
         if len(self.memory) > BATCH_SIZE:
             mini_sample = random.sample(self.memory, BATCH_SIZE)
         else:
             mini_sample = self.memory
 
-    def train_short_memory(self):
-        pass
         states, actions, rewards, next_states, dones = zip(*mini_sample)
 
         self._train_step(states, actions, rewards, next_states, dones)   
@@ -140,7 +127,6 @@ class Agent:
         
 
     def get_action(self, state):
-        pass
         self.epsilon = 80 - self.n_games
         final_move = [0,0,0]
 
