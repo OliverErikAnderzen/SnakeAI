@@ -37,6 +37,9 @@ class Agent:
         self.gamma = 0 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft() if full
         # TODO: model, trainer
+        self.model = SnakeGameNN(input_size=11, hidden_size=256, output_size=3)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=LR)
+        self.criterion = nn.MSELoss()
 
     def get_state(self, game):
         head = game.snake[0]
@@ -117,6 +120,7 @@ class Agent:
 
     def remember(self, state, action, reward, next_state, done):
         pass
+        self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
         pass
