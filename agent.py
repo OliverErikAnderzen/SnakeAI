@@ -145,6 +145,37 @@ class Agent:
             # print(f"🧠 Model Move Chosen: {move}")  # Debug
         return move
 
+    def _train_step(self, state, action, reward, next_state, done):
+        state = torch.tensor(state, dtype=torch.float)
+        next_state = torch.tensor(next_state, dtype=torch.float)
+        action = torch.tensor(action, dtype=torch.long)
+        reward = torch.tensor(reward, dtype=torch.float)
+
+        if len(state.shape) == 1:
+            state = torch.unsqueeze(state, 0)
+            next_state = torch.unsqueeze(next_state, 0)
+            action = torch.unsqueeze(action, 0)
+            reward = torch.unsqueeze(reward, 0)
+            done = (done,)
+
+        prediction = self.model(state)
+        target = prediction.clone()
+
+        for idx in range(len(done)):
+            Q_new = reward[idx]
+            if not done[idx]:
+                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx])).item()
+            else:
+                Q_new = reward[idx]  # No future reward if the game is over
+
+            target[idx][torch.argmax(action[idx]).item()] = Q_new
+
+        self.optimizer.zero_grad()
+        loss = self.criterion(target, prediction)
+        loss.backward()
+        self.optimizer.step()
+
+        print(f"📉 Training Loss: {loss.item()}")  # Debugging to track learning
 
 
 def train():
