@@ -48,3 +48,21 @@ This is done after every step, where the model is trained on just the last actio
 
 #### train long memory
 This is done on a batch of past experiences. It then learns from random past experiences, if batch-size = 3000, it takes 3000 past experiences at random and trains upon. Its run after each game ends.
+
+### State
+The state is a numerical, numpy array which tells the agent about the information it needs to make its action. I have implemented things as boolean if there is imidiate danger in a direction, its distance delta between the head and food, and also its positional relationship to its own tail. This is what the agent will use to make its prediciton of the next action to take.
+
+### Action
+By running the state (data) through the model, you get a output which tells the snake what action to make. This action is supposed to minimize the loss function. 
+
+### Training
+The model runs through a loop:
+1. Get game state
+2. Predict best action using the state
+3. Do the action
+4. Calculate how good the prediction held up to the reward it got
+5. Save in memory
+6. Train the model
+7. Repeat
+
+###
