@@ -9,7 +9,7 @@ class SnakeGameModel:
         self.FPS = 5
         self.segments = [(5, 5)]
         self.direction = "UP"
-        self.food = (15, 15)
+        self.food = self.generate_food_position()
         self.score = 0
         self.var_game_over = False
 
