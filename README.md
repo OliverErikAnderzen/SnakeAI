@@ -7,10 +7,20 @@ Im not going to go into detail about the game logic but i will talk only about t
 
 ## The AI Agent
 
-1. Neural Network
+### Neural Network
+Make a very simple neural network
+- **Input layer**: 11 neurons
+- **Hidden layer**: 256 neurons
+- **Output layer**: 3 neurons
+
+The Input layer has 11 neurons because it takes a game-state np.array with 11 boolean values. The output layer has 3 neurons because it has to choose between three actions, LEFT, UP or RIGHT.
+
+We are using the ReLU activation function as we pass the values between the layers. This makes all negative values to 0.
+
+![alt text](<readme_images/Screenshot 2025-01-30 132501.png>)
 
 ### Q-learning
-We first make a neural network. The neural network is using Q-learning. The Q-value stands for the future reward after taking a certain action in a specific state; Q(s, a). Higher Q-value is better. Using the NN, the agent learns to predict Q-values.
+The neural network is using Q-learning. The Q-value stands for the future reward after taking a certain action in a specific state; Q(s, a). Higher Q-value is better. Using the NN, the agent learns to predict Q-values.
 
 The agent interacts with the enviroment by
 * observing state
