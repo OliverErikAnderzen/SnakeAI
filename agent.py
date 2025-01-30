@@ -12,47 +12,47 @@ from controller import SnakeGameController
 
 # from main import main
 
-MAX_MEMORY = 100_000
+MAX_MEMORY = 100_000_00
 BATCH_SIZE = 2000
 LR = 0.001
 
 class SnakeGameNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(SnakeGameNN, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, output_size)
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
     # def __init__(self, input_size, hidden_size, output_size):
     #     super(SnakeGameNN, self).__init__()
     #     self.fc1 = nn.Linear(input_size, hidden_size)
     #     self.fc2 = nn.Linear(hidden_size, hidden_size)
-    #     self.fc3 = nn.Linear(hidden_size, hidden_size // 2)  # Extra layer for depth
-    #     self.fc4 = nn.Linear(hidden_size // 2, output_size)
+    #     self.fc3 = nn.Linear(hidden_size, output_size)
 
     # def forward(self, x):
     #     x = F.relu(self.fc1(x))
     #     x = F.relu(self.fc2(x))
-    #     x = F.relu(self.fc3(x))  # New hidden layer
-    #     x = self.fc4(x)
+    #     x = self.fc3(x)
     #     return x
+
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SnakeGameNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)  # Extra layer
+        self.fc4 = nn.Linear(hidden_size, output_size)  # Output
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))  # Extra processing
+        x = self.fc4(x)
+        return x
 
 class Agent:
     def __init__(self, reset_model=True):
         self.n_games = 0
-        self.epsilon = 300 # randomness
-        self.gamma = 0.9 # discount rate
+        self.epsilon = 2400 # randomness
+        self.gamma = 0.90 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft() if full
         
         if reset_model:
             print("🧠 Initializing a NEW neural network!")
-            self.model = SnakeGameNN(input_size=11, hidden_size=512, output_size=3)  # New model
+            self.model = SnakeGameNN(input_size=15, hidden_size=256, output_size=3)  # New model
         else:
             print("🔁 Using the previous trained model!")
 
@@ -107,6 +107,8 @@ class Agent:
             point_right[1] >= game.grid_size[1]
         )
 
+        tail = game.segments[-1]  # Last part of the snake
+
         # Normalize direction and food locations
         state = [
             # Danger zones
@@ -125,6 +127,11 @@ class Agent:
             food[0] > head[0],  # Food right
             food[1] < head[1],  # Food up
             food[1] > head[1],  # Food down
+
+            tail[0] < head[0],  # Tail is left
+            tail[0] > head[0],  # Tail is right
+            tail[1] < head[1],  # Tail is above
+            tail[1] > head[1],  # Tail is below
         ]
         return np.array(state, dtype=int)
 
@@ -147,7 +154,7 @@ class Agent:
         
 
     def get_action(self, state):
-        self.epsilon = max(1, 150 - self.n_games)  # Allows longer exploration
+        self.epsilon = max(5, 1000 - self.n_games)  # Allows longer exploration
 
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 2)
@@ -189,7 +196,7 @@ class Agent:
         loss.backward()
         self.optimizer.step()
 
-        print(f"📉 Training Loss: {loss.item()}")  # Debugging to track learning
+        # print(f"📉 Training Loss: {loss.item()}")  # Debugging to track learning
 
 
 def train():
@@ -224,12 +231,29 @@ def train():
         new_distance = abs(food_x - new_head_x) + abs(food_y - new_head_y)
 
         view.render()
-        time.sleep(0.01)  # Slow down the game
+        # time.sleep(0.01)  # Slow down the game
 
         if game.game_over():
             reward = -1000  # 🚨 Strong penalty for dying
+            score = game.score
+            if score > high_score:
+                high_score = score
+            print(f"Game: {agent.n_games}, Score: {score}, High Score: {high_score}")
+
+            if agent.n_games % 5 == 0:  # ✅ Train long memory every 5 games
+                agent.train_long_memory()
+
+            agent.n_games += 1
+
+            agent.train_short_memory(state_old, move, reward, state_new, game.game_over())
+            agent.remember(state_old, move, reward, state_new, game.game_over())
+            
+            game.reset()
+
+
         elif game.eating():
             reward = 500  # 🍎 Large reward for eating food
+            # print("eaten, score:", game.score)
         else:
             if new_distance < prev_distance:
                 reward = 10  # 👍 Bigger reward for getting closer
@@ -238,24 +262,14 @@ def train():
             else:
                 reward = -5  # 👎 Small penalty for staying in place
             
-            reward += 0.2  # 🏆 Small bonus for staying alive
+            reward += 1  # 🏆 Small bonus for staying alive
 
+            reward += len(game.segments) * 0.5
 
         state_new = agent.get_state(game)
 
         agent.train_short_memory(state_old, move, reward, state_new, game.game_over())
         agent.remember(state_old, move, reward, state_new, game.game_over())
-
-        if game.game_over():
-            score = game.score  
-            if score > high_score:
-                high_score = score
-
-            # print(f"Game: {agent.n_games}, Score: {score}, High Score: {high_score}")
-
-            game.reset()
-            agent.n_games += 1
-
 
 if __name__ == "__main__":
     train()
