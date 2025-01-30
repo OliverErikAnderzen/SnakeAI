@@ -127,15 +127,18 @@ class Agent:
         
 
     def get_action(self, state):
-        self.epsilon = 80 - self.n_games
-        final_move = [0,0,0]
+        self.epsilon = max(1, 150 - self.n_games)  # Allows longer exploration
 
-        if random.randint(0,200) < self.epsilon:
-            move = random.randint(0,2)
+        if random.randint(0, 200) < self.epsilon:
+            move = random.randint(0, 2)
+            # print(f"🔄 Random Move Chosen: {move}")  # Debug
         else:
             state_tensor = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state_tensor)
             move = torch.argmax(prediction).item()
+            # print(f"🧠 Model Move Chosen: {move}")  # Debug
+        return move
+
 
         final_move[move] = 1
         return final_move
