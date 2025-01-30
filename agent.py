@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as final_move
+import torch.nn.functional as F
 import random
 import numpy as np
 from collections import deque
@@ -9,7 +9,7 @@ from model import SnakeGameModel
 from view import SnakeGameView
 from controller import SnakeGameController
 
-from main import main
+# from main import main
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -46,7 +46,7 @@ class Agent:
         self.criterion = nn.SmoothL1Loss()
 
     def get_state(self, game):
-        head = game.snake[0]
+        head = game.segments[0]
         direction = game.direction
         food = game.food
 
@@ -146,8 +146,6 @@ class Agent:
         return move
 
 
-        final_move[move] = 1
-        return final_move
 
 def train():
     plot_scores = []
