@@ -32,8 +32,8 @@ class SnakeGameNN(nn.Module):
 class Agent:
     def __init__(self):
         self.n_games = 0
-        self.epsilon = 0 # randomness
-        self.gamma = 0 # discount rate
+        self.epsilon = 300 # randomness
+        self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft() if full
         self.model = SnakeGameNN(input_size=11, hidden_size=256, output_size=3)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=LR)
