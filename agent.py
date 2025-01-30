@@ -43,7 +43,7 @@ class Agent:
             print("🔁 Using the previous trained model!")
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=LR)
-        self.criterion = nn.MSELoss()
+        self.criterion = nn.SmoothL1Loss()
 
     def get_state(self, game):
         head = game.snake[0]
