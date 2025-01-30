@@ -30,12 +30,18 @@ class SnakeGameNN(nn.Module):
 
 
 class Agent:
-    def __init__(self):
+    def __init__(self, reset_model=True):
         self.n_games = 0
         self.epsilon = 300 # randomness
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft() if full
-        self.model = SnakeGameNN(input_size=11, hidden_size=256, output_size=3)
+        
+        if reset_model:
+            print("🧠 Initializing a NEW neural network!")
+            self.model = SnakeGameNN(input_size=11, hidden_size=512, output_size=3)  # New model
+        else:
+            print("🔁 Using the previous trained model!")
+
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=LR)
         self.criterion = nn.MSELoss()
 
