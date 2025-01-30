@@ -148,20 +148,69 @@ class Agent:
 
 
 def train():
-    plot_scores = []
-    plot_mean_scores = []
-    total_score = 0
-    record = 0
     agent = Agent()
-    game = SnakeGame()
-    while True:
-        #get old state
-        state_old = agent.get_state(game)
-        #get move
-        final_move = agent.get_action(state_old)
+    game = SnakeGameModel((20, 20))
+    view = SnakeGameView(game)  
+    high_score = 0
 
-        #perform move and get new state
-        reward, done, score = game.play
+    while True:
+        state_old = agent.get_state(game)
+
+        food_x, food_y = game.food
+        head_x, head_y = game.segments[0]  # Get snake head position
+        prev_distance = abs(food_x - head_x) + abs(food_y - head_y)
+
+        move = agent.get_action(state_old)
+
+        # 🔄 Convert move (0,1,2) to "UP", "DOWN", etc.
+        direction_map = {
+            0: game.direction,  # 0 means go straight, so keep current direction
+            1: {"UP": "LEFT", "DOWN": "RIGHT", "LEFT": "DOWN", "RIGHT": "UP"}[game.direction],  # Left
+            2: {"UP": "RIGHT", "DOWN": "LEFT", "LEFT": "UP", "RIGHT": "DOWN"}[game.direction],  # Right
+        }
+        new_direction = direction_map[move]
+
+        # print(f"Before move: {game.direction}, Move: {move} → After move: {new_direction}")  # Debugging
+
+        game.turn_direction(new_direction)  # Pass the correct string direction
+        game.step()
+
+        new_head_x, new_head_y = game.segments[0]
+        new_distance = abs(food_x - new_head_x) + abs(food_y - new_head_y)
+
+        view.render()
+        time.sleep(0.01)  # Slow down the game
+
+        if game.game_over():
+            reward = -1000  # 🚨 Strong penalty for dying
+        elif game.eating():
+            reward = 500  # 🍎 Large reward for eating food
+        else:
+            if new_distance < prev_distance:
+                reward = 10  # 👍 Bigger reward for getting closer
+            elif new_distance > prev_distance:
+                reward = -10  # ❌ Higher penalty for moving away
+            else:
+                reward = -5  # 👎 Small penalty for staying in place
+            
+            reward += 0.2  # 🏆 Small bonus for staying alive
+
+
+        state_new = agent.get_state(game)
+
+        agent.train_short_memory(state_old, move, reward, state_new, game.game_over())
+        agent.remember(state_old, move, reward, state_new, game.game_over())
+
+        if game.game_over():
+            score = game.score  
+            if score > high_score:
+                high_score = score
+
+            # print(f"Game: {agent.n_games}, Score: {score}, High Score: {high_score}")
+
+            game.reset()
+            agent.n_games += 1
+
 
 if __name__ == "__main__":
     train()
