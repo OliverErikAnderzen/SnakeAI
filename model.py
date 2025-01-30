@@ -76,14 +76,19 @@ class SnakeGameModel:
 
     def eating(self):
         # is eating if the next step will be on the food position
-        return self.step_head(self.segments[0]) == self.food
+        
+        # return self.step_head(self.segments[0]) == self.food
+        return self.segments[0] == self.food
 
     def eat(self):
         # append foods position to front of segments DONE
-        self.segments.insert(0,self.food)
+        new_head = self.step_head(self.segments[0])  # Predict the next step
+        self.segments.insert(0, new_head)  # Insert new head at the front
+        self.score += 1
 
         # create a new food position
-        self.new_food()
+        while self.food in self.segments:
+            self.new_food()
 
     def out_of_bounds(self):
         x, y = self.segments[0]
