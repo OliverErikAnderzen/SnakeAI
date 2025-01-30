@@ -29,3 +29,22 @@ The agent interacts with the enviroment by
 * changing state (by taking action)
 
 ![Deep Q-learning formula](<readme_images/Screenshot 2025-01-30 131309.png>)
+
+### The Agent Class
+The Agent controls the decisions made and the training of the model.
+
+important variables
+- **epsilon**: Chooses if the model should be exploring or exploiting.
+- **gamma**: Sets the importance of future rewards.
+- **memory**: A deque, used to store experiences.
+- **optimizer**: updates the weights to reduce the loss, Adam is great.
+- **criterion**: (loss function), calculates how wrong the model is at predicting.
+
+### Memory
+Experiences can be saved and discarded from the deque self.memory.
+
+#### train short memory
+This is done after every step, where the model is trained on just the last action.
+
+#### train long memory
+This is done on a batch of past experiences. It then learns from random past experiences, if batch-size = 3000, it takes 3000 past experiences at random and trains upon. Its run after each game ends.
